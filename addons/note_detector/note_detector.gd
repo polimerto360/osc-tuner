@@ -46,7 +46,7 @@ var _sustained_note_index: int = -1 # The note we're currently sustaining (PLAYI
 var is_playing: bool = false
 
 const NOTE_COUNT: int = 12 * 9 # 12 notes per octave, 9 octaves
-var C0_HZ: float = 16.35 # C0 = index 0
+static var C0_HZ: float = 16.35 # C0 = index 0
 
 func _init() -> void:
 	_note_states.resize(NOTE_COUNT)
@@ -153,7 +153,7 @@ func _process(delta: float) -> void:
 
 
 ## Returns semitone index with C0 = 0. -1 when no pitch.
-func _frequency_to_index(frequency: float) -> int:
+static func _frequency_to_index(frequency: float) -> int:
 	if frequency <= 0.0 or frequency < C0_HZ:
 		return -1
 	# Semitones from C0. C0 = index 0, C1 = 12, A4 = 57, etc.

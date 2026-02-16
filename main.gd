@@ -6,7 +6,6 @@ extends Control
 @onready var line : Line2D = osc_bg.get_node("OscVC/SubViewport/Line")
 var button_scene = preload("res://button.tscn")
 var capture : AudioEffectCapture
-#var fft : AudioEffectSpectrumAnalyzerInstance
 var lowpass : AudioEffectLowPassFilter
 var highpass : AudioEffectHighPassFilter
 var samples = PackedVector2Array()
@@ -156,7 +155,7 @@ func _on_amp_value_changed(value: float) -> void:
 func _on_freq_base_value_changed(value: float) -> void:
 	C4 = value / pow(2, 9/12.0)
 	set_note()
-	$NoteDetector.C0_HZ = st_to_pitch(-48)
+	NoteDetector.C0_HZ = st_to_pitch(-48)
 	#note_ranges = []
 	#for i in range(12):
 	#	note_ranges.push_back([0, 0])

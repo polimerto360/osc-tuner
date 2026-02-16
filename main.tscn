@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://d0enjm0x4vfod"]
 
 [ext_resource type="Script" uid="uid://b2mghs6x22mjw" path="res://main.gd" id="1_ig7tw"]
-[ext_resource type="PackedScene" uid="uid://cyvdrwa8xjqoi" path="res://button.tscn" id="2_0xm2m"]
 [ext_resource type="Texture2D" uid="uid://dynay8l6qxxl3" path="res://blue_green_bg.png" id="2_lquwl"]
 [ext_resource type="Texture2D" uid="uid://dw4l1nrayy56" path="res://osc_bg.png" id="3_7mycd"]
 [ext_resource type="Material" uid="uid://dclsejdwxtmay" path="res://Shading.tres" id="3_h2yge"]
@@ -40,20 +39,6 @@ default_font_size = 50
 [sub_resource type="LabelSettings" id="LabelSettings_h2yge"]
 font_size = 29
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1bvp3"]
-bg_color = Color(0, 0.31510863, 0.45142174, 1)
-corner_radius_top_left = 50
-corner_radius_top_right = 50
-corner_radius_bottom_right = 50
-corner_radius_bottom_left = 50
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lquwl"]
-bg_color = Color(0, 0.31510863, 0.45142174, 1)
-corner_radius_top_left = 50
-corner_radius_top_right = 50
-corner_radius_bottom_right = 50
-corner_radius_bottom_left = 50
-
 [sub_resource type="LabelSettings" id="LabelSettings_1bvp3"]
 font_size = 21
 font_color = Color(0.65012825, 0.6501283, 0.65012825, 1)
@@ -87,17 +72,19 @@ playback_type = 1
 
 [node name="Oscilloscope_bg" type="NinePatchRect" parent="." unique_id=8185529]
 material = SubResource("CanvasItemMaterial_7mycd")
-layout_mode = 0
-anchor_left = 0.08359375
-anchor_top = 0.15416667
-anchor_right = 0.6039063
-anchor_bottom = 0.8680556
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.06015625
+anchor_top = 0.15694444
+anchor_right = 0.5804688
+anchor_bottom = 0.87083334
 texture = ExtResource("3_7mycd")
 region_rect = Rect2(0, 0, 1920, 1080)
 patch_margin_left = 50
 patch_margin_top = 50
 patch_margin_right = 50
 patch_margin_bottom = 50
+metadata/_edit_use_anchors_ = true
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="Oscilloscope_bg" unique_id=497793435]
 material = SubResource("ShaderMaterial_5vw27")
@@ -144,8 +131,10 @@ end_cap_mode = 2
 [node name="InputDevices" type="FoldableContainer" parent="." unique_id=532360983]
 layout_mode = 1
 anchors_preset = -1
-anchor_right = 0.64500004
-anchor_bottom = 0.8138889
+anchor_left = 0.02
+anchor_top = 0.02
+anchor_right = 0.61140627
+anchor_bottom = 0.8347222
 offset_right = 0.39996338
 theme_override_font_sizes/font_size = 61
 folded = true
@@ -156,25 +145,18 @@ metadata/_edit_use_anchors_ = true
 visible = false
 layout_mode = 2
 
-[node name="Button" parent="." unique_id=215650675 instance=ExtResource("2_0xm2m")]
-visible = false
-layout_mode = 1
-offset_left = 866.0
-offset_right = 947.0
-offset_bottom = 81.0
-theme_override_font_sizes/font_size = 46
-text = "⟲"
-
 [node name="Panel" type="Panel" parent="." unique_id=597497022]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.66300005
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_left = 0.64268756
+anchor_top = 0.02
+anchor_right = 0.98
+anchor_bottom = 0.9800001
 offset_left = 0.35992432
 grow_horizontal = 0
 grow_vertical = 2
 theme = ExtResource("4_1bvp3")
+metadata/_edit_use_anchors_ = true
 
 [node name="Controls" type="GridContainer" parent="Panel" unique_id=1391356130]
 layout_mode = 1
@@ -195,7 +177,7 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -16.0
+offset_top = -20.0
 grow_horizontal = 2
 grow_vertical = 0
 size_flags_horizontal = 3
@@ -289,9 +271,14 @@ grow_horizontal = 0
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.3496, 0.92, 0.7774, 1)
+theme_override_colors/font_focus_color = Color(0.7176471, 1, 0.9137255, 1)
+theme_override_colors/font_pressed_color = Color(0.29259998, 0.77, 0.65065, 1)
+theme_override_colors/font_hover_color = Color(0.7176471, 1, 0.9137255, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.29411766, 0.76862746, 0.6509804, 1)
+theme_override_colors/font_disabled_color = Color(0.34901962, 0.92156863, 0.7764706, 0.5019608)
 theme_override_font_sizes/font_size = 81
-theme_override_styles/normal = SubResource("StyleBoxFlat_1bvp3")
-text = "→"
+text = "+"
 
 [node name="NoteDown" type="Button" parent="Panel/Controls/Note/NoteText" unique_id=311177819]
 material = ExtResource("3_h2yge")
@@ -305,9 +292,14 @@ offset_bottom = 55.5
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.34901962, 0.92156863, 0.7764706, 1)
+theme_override_colors/font_focus_color = Color(0.7176471, 1, 0.9137255, 1)
+theme_override_colors/font_pressed_color = Color(0.29411766, 0.76862746, 0.6509804, 1)
+theme_override_colors/font_hover_color = Color(0.7176471, 1, 0.9137255, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.29411766, 0.76862746, 0.6509804, 1)
+theme_override_colors/font_disabled_color = Color(0.34901962, 0.92156863, 0.7764706, 0.5019608)
 theme_override_font_sizes/font_size = 81
-theme_override_styles/normal = SubResource("StyleBoxFlat_lquwl")
-text = "←"
+text = "-"
 
 [node name="Freq" type="Label" parent="Panel/Controls/Note/NoteText" unique_id=546154592]
 layout_mode = 1
@@ -330,6 +322,7 @@ vertical_alignment = 1
 layout_mode = 2
 theme_override_font_sizes/font_size = 31
 text = "Auto"
+flat = true
 text_overrun_behavior = 3
 
 [node name="FreqBase" type="SpinBox" parent="Panel/Controls" unique_id=394742797]
@@ -427,7 +420,6 @@ metadata/_custom_type_script = "uid://dsnggnmc5iwky"
 
 [connection signal="resized" from="." to="." method="draw_helper_lines"]
 [connection signal="folding_changed" from="InputDevices" to="." method="_on_input_devices_folding_changed"]
-[connection signal="pressed" from="Button" to="." method="get_devices"]
 [connection signal="value_changed" from="Panel/Controls/Amp/Amp" to="." method="_on_amp_value_changed"]
 [connection signal="value_changed" from="Panel/Controls/TimeWindow/OscSize" to="." method="_on_osc_time_value_changed"]
 [connection signal="pressed" from="Panel/Controls/Note/NoteText/NoteUp" to="." method="change_note" binds= [1]]
