@@ -1,0 +1,7 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://dclsejdwxtmay"]
+
+[ext_resource type="Shader" uid="uid://db17advth2xta" path="res://Shading.gdshader" id="1_3kwq1"]
+
+[resource]
+shader = ExtResource("1_3kwq1")
+shader_parameter/strength = 0.205

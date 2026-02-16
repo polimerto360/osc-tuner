@@ -1,0 +1,439 @@
+[gd_scene format=3 uid="uid://d0enjm0x4vfod"]
+
+[ext_resource type="Script" uid="uid://b2mghs6x22mjw" path="res://main.gd" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://cyvdrwa8xjqoi" path="res://button.tscn" id="2_0xm2m"]
+[ext_resource type="Texture2D" uid="uid://dynay8l6qxxl3" path="res://blue_green_bg.png" id="2_lquwl"]
+[ext_resource type="Texture2D" uid="uid://dw4l1nrayy56" path="res://osc_bg.png" id="3_7mycd"]
+[ext_resource type="Material" uid="uid://dclsejdwxtmay" path="res://Shading.tres" id="3_h2yge"]
+[ext_resource type="Theme" uid="uid://dtjp57rwghsli" path="res://theme.tres" id="4_1bvp3"]
+[ext_resource type="Shader" uid="uid://cggij8k2h432d" path="res://osc_bg.gdshader" id="4_272bh"]
+[ext_resource type="Shader" uid="uid://ccmgxle0e2ee1" path="res://osc.gdshader" id="5_5vw27"]
+[ext_resource type="Script" uid="uid://dsnggnmc5iwky" path="res://addons/note_detector/note_detector.gd" id="9_kek77"]
+
+[sub_resource type="AudioStreamMicrophone" id="AudioStreamMicrophone_0xm2m"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_7mycd"]
+blend_mode = 3
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5vw27"]
+shader = ExtResource("4_272bh")
+shader_parameter/ratio = 1.296
+shader_parameter/r = 0.12
+shader_parameter/shading_strength = 1.785
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kek77"]
+resource_local_to_scene = true
+shader = ExtResource("5_5vw27")
+shader_parameter/ratio = 1.296
+shader_parameter/r = 0.1
+shader_parameter/sy = 0.1
+
+[sub_resource type="Gradient" id="Gradient_lquwl"]
+interpolation_mode = 2
+interpolation_color_space = 2
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.29803923, 0.29803923, 0.8784314, 1, 0.15085477, 0.5944325, 0.7990775, 1, 0.19215687, 0.8509804, 0.40784314, 1)
+
+[sub_resource type="Theme" id="Theme_h2yge"]
+default_font_size = 50
+
+[sub_resource type="LabelSettings" id="LabelSettings_h2yge"]
+font_size = 29
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1bvp3"]
+bg_color = Color(0, 0.31510863, 0.45142174, 1)
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lquwl"]
+bg_color = Color(0, 0.31510863, 0.45142174, 1)
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+
+[sub_resource type="LabelSettings" id="LabelSettings_1bvp3"]
+font_size = 21
+font_color = Color(0.65012825, 0.6501283, 0.65012825, 1)
+
+[node name="Main" type="Control" unique_id=586583348]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4_1bvp3")
+script = ExtResource("1_ig7tw")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=114752465]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_lquwl")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1482118975]
+stream = SubResource("AudioStreamMicrophone_0xm2m")
+autoplay = true
+bus = &"Analysis"
+playback_type = 1
+
+[node name="Oscilloscope_bg" type="NinePatchRect" parent="." unique_id=8185529]
+material = SubResource("CanvasItemMaterial_7mycd")
+layout_mode = 0
+anchor_left = 0.08359375
+anchor_top = 0.15416667
+anchor_right = 0.6039063
+anchor_bottom = 0.8680556
+texture = ExtResource("3_7mycd")
+region_rect = Rect2(0, 0, 1920, 1080)
+patch_margin_left = 50
+patch_margin_top = 50
+patch_margin_right = 50
+patch_margin_bottom = 50
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Oscilloscope_bg" unique_id=497793435]
+material = SubResource("ShaderMaterial_5vw27")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.1035156e-05
+offset_right = 6.1035156e-05
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Oscilloscope_bg/SubViewportContainer" unique_id=1011397480]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(666, 514)
+render_target_update_mode = 4
+
+[node name="BgLines" type="Node2D" parent="Oscilloscope_bg/SubViewportContainer/SubViewport" unique_id=1948535926]
+
+[node name="OscVC" type="SubViewportContainer" parent="Oscilloscope_bg" unique_id=1725346109]
+material = SubResource("ShaderMaterial_kek77")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Oscilloscope_bg/OscVC" unique_id=2044708483]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(666, 514)
+render_target_update_mode = 4
+
+[node name="Line" type="Line2D" parent="Oscilloscope_bg/OscVC/SubViewport" unique_id=1147960452]
+width = 2.0
+gradient = SubResource("Gradient_lquwl")
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="InputDevices" type="FoldableContainer" parent="." unique_id=532360983]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.64500004
+anchor_bottom = 0.8138889
+offset_right = 0.39996338
+theme_override_font_sizes/font_size = 61
+folded = true
+title = "Input Device"
+metadata/_edit_use_anchors_ = true
+
+[node name="GridContainer" type="GridContainer" parent="InputDevices" unique_id=12029030]
+visible = false
+layout_mode = 2
+
+[node name="Button" parent="." unique_id=215650675 instance=ExtResource("2_0xm2m")]
+visible = false
+layout_mode = 1
+offset_left = 866.0
+offset_right = 947.0
+offset_bottom = 81.0
+theme_override_font_sizes/font_size = 46
+text = "⟲"
+
+[node name="Panel" type="Panel" parent="." unique_id=597497022]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.66300005
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.35992432
+grow_horizontal = 0
+grow_vertical = 2
+theme = ExtResource("4_1bvp3")
+
+[node name="Controls" type="GridContainer" parent="Panel" unique_id=1391356130]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Amp" type="Control" parent="Panel/Controls" unique_id=63559967]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Amp" type="HSlider" parent="Panel/Controls/Amp" unique_id=69454848]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = SubResource("Theme_h2yge")
+min_value = 0.1
+max_value = 10000.0
+step = 0.1
+value = 1.0
+exp_edit = true
+
+[node name="Label" type="Label" parent="Panel/Controls/Amp" unique_id=2118721654]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "Amplification
+1.0"
+label_settings = SubResource("LabelSettings_h2yge")
+text_overrun_behavior = 3
+
+[node name="TimeWindow" type="Control" parent="Panel/Controls" unique_id=36248910]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="OscSize" type="HSlider" parent="Panel/Controls/TimeWindow" unique_id=724741858]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = SubResource("Theme_h2yge")
+min_value = 1.0
+max_value = 2000.0
+value = 200.0
+rounded = true
+
+[node name="Label" type="Label" parent="Panel/Controls/TimeWindow" unique_id=261647285]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "Oscilloscope time window
+12 ms"
+label_settings = SubResource("LabelSettings_h2yge")
+text_overrun_behavior = 3
+
+[node name="Note" type="Control" parent="Panel/Controls" unique_id=1135752355]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="NoteText" type="Label" parent="Panel/Controls/Note" unique_id=1890705424]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 86
+text = "A# 4"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NoteUp" type="Button" parent="Panel/Controls/Note/NoteText" unique_id=36464140]
+material = ExtResource("3_h2yge")
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -55.5
+offset_bottom = 55.5
+grow_horizontal = 0
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 81
+theme_override_styles/normal = SubResource("StyleBoxFlat_1bvp3")
+text = "→"
+
+[node name="NoteDown" type="Button" parent="Panel/Controls/Note/NoteText" unique_id=311177819]
+material = ExtResource("3_h2yge")
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -55.5
+offset_right = 100.0
+offset_bottom = 55.5
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 81
+theme_override_styles/normal = SubResource("StyleBoxFlat_lquwl")
+text = "←"
+
+[node name="Freq" type="Label" parent="Panel/Controls/Note/NoteText" unique_id=546154592]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -23.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "(440 Hz)"
+label_settings = SubResource("LabelSettings_1bvp3")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CheckButton" type="CheckButton" parent="Panel/Controls" unique_id=1439599291]
+layout_mode = 2
+theme_override_font_sizes/font_size = 31
+text = "Auto"
+text_overrun_behavior = 3
+
+[node name="FreqBase" type="SpinBox" parent="Panel/Controls" unique_id=394742797]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("4_1bvp3")
+min_value = 220.0
+max_value = 880.0
+step = 0.0
+value = 440.0
+prefix = "A 4 ="
+suffix = "Hz"
+custom_arrow_step = 1.0
+
+[node name="HighPass" type="Control" parent="Panel/Controls" unique_id=1959735093]
+custom_minimum_size = Vector2(0.04, 0.035)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Cutoff" type="HSlider" parent="Panel/Controls/HighPass" unique_id=1486002028]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = SubResource("Theme_h2yge")
+min_value = 1.0
+max_value = 20050.0
+value = 1.0
+exp_edit = true
+rounded = true
+
+[node name="Label" type="Label" parent="Panel/Controls/HighPass" unique_id=1012622904]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "High pass filter cutoff
+100 Hz"
+label_settings = SubResource("LabelSettings_h2yge")
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="LowPass" type="Control" parent="Panel/Controls" unique_id=2076313216]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Cutoff" type="HSlider" parent="Panel/Controls/LowPass" unique_id=1390775771]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = SubResource("Theme_h2yge")
+min_value = 1.0
+max_value = 20050.0
+value = 20050.0
+exp_edit = true
+rounded = true
+
+[node name="Label" type="Label" parent="Panel/Controls/LowPass" unique_id=1457048878]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "Low pass filter cutoff
+1000 Hz"
+label_settings = SubResource("LabelSettings_h2yge")
+text_overrun_behavior = 3
+
+[node name="NoteDetector" type="Node" parent="." unique_id=1023089]
+script = ExtResource("9_kek77")
+metadata/_custom_type_script = "uid://dsnggnmc5iwky"
+
+[connection signal="resized" from="." to="." method="draw_helper_lines"]
+[connection signal="folding_changed" from="InputDevices" to="." method="_on_input_devices_folding_changed"]
+[connection signal="pressed" from="Button" to="." method="get_devices"]
+[connection signal="value_changed" from="Panel/Controls/Amp/Amp" to="." method="_on_amp_value_changed"]
+[connection signal="value_changed" from="Panel/Controls/TimeWindow/OscSize" to="." method="_on_osc_time_value_changed"]
+[connection signal="pressed" from="Panel/Controls/Note/NoteText/NoteUp" to="." method="change_note" binds= [1]]
+[connection signal="pressed" from="Panel/Controls/Note/NoteText/NoteDown" to="." method="change_note" binds= [-1]]
+[connection signal="toggled" from="Panel/Controls/CheckButton" to="." method="_on_auto_button_toggled"]
+[connection signal="value_changed" from="Panel/Controls/FreqBase" to="." method="_on_freq_base_value_changed"]
+[connection signal="value_changed" from="Panel/Controls/HighPass/Cutoff" to="." method="_on_hp_cutoff_value_changed"]
+[connection signal="value_changed" from="Panel/Controls/LowPass/Cutoff" to="." method="_on_lp_cutoff_value_changed"]
+[connection signal="detect_note_started" from="NoteDetector" to="." method="_on_note_detected"]

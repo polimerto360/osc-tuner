@@ -1,0 +1,31 @@
+[gd_scene load_steps=4 format=3 uid="uid://cyvdrwa8xjqoi"]
+
+[ext_resource type="Material" uid="uid://dclsejdwxtmay" path="res://Shading.tres" id="1_r04n3"]
+[ext_resource type="Theme" uid="uid://dtjp57rwghsli" path="res://theme.tres" id="2_vxja4"]
+[ext_resource type="Texture2D" uid="uid://da6dyrhuhlo34" path="res://button(2).png" id="3_lt4la"]
+
+[node name="Button" type="Button"]
+material = ExtResource("1_r04n3")
+offset_right = 286.0
+offset_bottom = 100.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("2_vxja4")
+theme_override_font_sizes/font_size = 41
+text = "test"
+text_overrun_behavior = 3
+
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_lt4la")
+patch_margin_left = 50
+patch_margin_top = 50
+patch_margin_right = 50
+patch_margin_bottom = 50
+axis_stretch_horizontal = 2
