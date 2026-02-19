@@ -1,7 +1,6 @@
 [gd_resource type="Theme" format=3 uid="uid://dtjp57rwghsli"]
 
 [ext_resource type="Texture2D" uid="uid://dw4l1nrayy56" path="res://osc_bg.png" id="1_e1x85"]
-[ext_resource type="Texture2D" uid="uid://dcj2306v6psd3" path="res://circle.png" id="1_vj6dk"]
 [ext_resource type="FontFile" uid="uid://ibnj6s6b83l4" path="res://BitcountSingle-VariableFont_CRSV,ELSH,ELXP,slnt,wght.ttf" id="2_cjfk0"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wvktn"]
@@ -19,6 +18,13 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1rmny"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mihib"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cjfk0"]
+bg_color = Color(0.0742, 0.14, 0.13561334, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_05tig"]
 bg_color = Color(0, 0, 0, 1)
@@ -67,6 +73,7 @@ Button/constants/align_to_largest_stylebox = 0
 Button/constants/h_separation = 4
 Button/constants/icon_max_width = 0
 Button/constants/outline_size = 0
+Button/font_sizes/font_size = 30
 Button/styles/disabled = SubResource("StyleBoxEmpty_wvktn")
 Button/styles/focus = SubResource("StyleBoxEmpty_e1x85")
 Button/styles/hover = SubResource("StyleBoxEmpty_cjfk0")
@@ -75,10 +82,15 @@ Button/styles/pressed = SubResource("StyleBoxEmpty_110ce")
 CheckButton/styles/focus = SubResource("StyleBoxEmpty_05tig")
 CheckButton/styles/hover = SubResource("StyleBoxEmpty_1rmny")
 CheckButton/styles/hover_pressed = SubResource("StyleBoxEmpty_mihib")
+FoldableContainer/styles/focus = SubResource("StyleBoxFlat_cjfk0")
+FoldableContainer/styles/panel = SubResource("StyleBoxFlat_cjfk0")
+FoldableContainer/styles/title_collapsed_hover_panel = SubResource("StyleBoxFlat_cjfk0")
 FoldableContainer/styles/title_collapsed_panel = SubResource("StyleBoxFlat_05tig")
-HSlider/icons/grabber = ExtResource("1_vj6dk")
-HSlider/icons/grabber_disabled = ExtResource("1_vj6dk")
-HSlider/icons/grabber_highlight = ExtResource("1_vj6dk")
+FoldableContainer/styles/title_hover_panel = SubResource("StyleBoxFlat_cjfk0")
+FoldableContainer/styles/title_panel = SubResource("StyleBoxFlat_05tig")
+HSlider/icons/grabber = null
+HSlider/icons/grabber_disabled = null
+HSlider/icons/grabber_highlight = null
 HSlider/styles/grabber_area = SubResource("StyleBoxFlat_vj6dk")
 HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_110ce")
 Panel/styles/panel = SubResource("StyleBoxTexture_cjfk0")

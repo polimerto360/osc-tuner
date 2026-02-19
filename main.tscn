@@ -7,6 +7,7 @@
 [ext_resource type="Theme" uid="uid://dtjp57rwghsli" path="res://theme.tres" id="4_1bvp3"]
 [ext_resource type="Shader" uid="uid://cggij8k2h432d" path="res://osc_bg.gdshader" id="4_272bh"]
 [ext_resource type="Shader" uid="uid://ccmgxle0e2ee1" path="res://osc.gdshader" id="5_5vw27"]
+[ext_resource type="Texture2D" uid="uid://da6dyrhuhlo34" path="res://button(2).png" id="7_kek77"]
 [ext_resource type="Script" uid="uid://dsnggnmc5iwky" path="res://addons/note_detector/note_detector.gd" id="9_kek77"]
 
 [sub_resource type="AudioStreamMicrophone" id="AudioStreamMicrophone_0xm2m"]
@@ -145,24 +146,34 @@ metadata/_edit_use_anchors_ = true
 visible = false
 layout_mode = 2
 
-[node name="Panel" type="Panel" parent="." unique_id=597497022]
+[node name="Panel" type="NinePatchRect" parent="." unique_id=1446292899]
+self_modulate = Color(0.53, 0.53, 0.53, 1)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.64268756
+anchor_left = 0.6333126
 anchor_top = 0.02
-anchor_right = 0.98
+anchor_right = 0.98000014
 anchor_bottom = 0.9800001
 offset_left = 0.35992432
 grow_horizontal = 0
 grow_vertical = 2
 theme = ExtResource("4_1bvp3")
+texture = ExtResource("7_kek77")
+patch_margin_left = 10
+patch_margin_top = 10
+patch_margin_right = 10
+patch_margin_bottom = 10
 metadata/_edit_use_anchors_ = true
 
 [node name="Controls" type="GridContainer" parent="Panel" unique_id=1391356130]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 
