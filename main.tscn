@@ -7,6 +7,7 @@
 [ext_resource type="Theme" uid="uid://dtjp57rwghsli" path="res://theme.tres" id="4_1bvp3"]
 [ext_resource type="Shader" uid="uid://cggij8k2h432d" path="res://osc_bg.gdshader" id="4_272bh"]
 [ext_resource type="Shader" uid="uid://ccmgxle0e2ee1" path="res://osc.gdshader" id="5_5vw27"]
+[ext_resource type="Shader" uid="uid://pqdrgi1gjhl6" path="res://blur.gdshader" id="7_4c57u"]
 [ext_resource type="Texture2D" uid="uid://da6dyrhuhlo34" path="res://button(2).png" id="7_kek77"]
 [ext_resource type="Script" uid="uid://dsnggnmc5iwky" path="res://addons/note_detector/note_detector.gd" id="9_kek77"]
 
@@ -27,6 +28,13 @@ shader = ExtResource("5_5vw27")
 shader_parameter/ratio = 1.296
 shader_parameter/r = 0.1
 shader_parameter/sy = 0.1
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_efxa6"]
+shader = ExtResource("7_4c57u")
+shader_parameter/feedback = 0.0
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_kek77"]
+viewport_path = NodePath("Oscilloscope_bg/OscRect/OscViewport")
 
 [sub_resource type="Gradient" id="Gradient_lquwl"]
 interpolation_mode = 2
@@ -117,13 +125,37 @@ grow_horizontal = 2
 grow_vertical = 2
 stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="Oscilloscope_bg/OscVC" unique_id=2044708483]
+[node name="Feedback" type="SubViewport" parent="Oscilloscope_bg/OscVC" unique_id=1224685877]
+transparent_bg = true
+size = Vector2i(666, 514)
+render_target_update_mode = 4
+
+[node name="Blur" type="TextureRect" parent="Oscilloscope_bg/OscVC/Feedback" unique_id=1194741851]
+material = SubResource("ShaderMaterial_efxa6")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = SubResource("ViewportTexture_kek77")
+
+[node name="OscRect" type="Control" parent="Oscilloscope_bg" unique_id=1511642633]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="OscViewport" type="SubViewport" parent="Oscilloscope_bg/OscRect" unique_id=2044708483]
 transparent_bg = true
 handle_input_locally = false
 size = Vector2i(666, 514)
 render_target_update_mode = 4
 
-[node name="Line" type="Line2D" parent="Oscilloscope_bg/OscVC/SubViewport" unique_id=1147960452]
+[node name="Line" type="Line2D" parent="Oscilloscope_bg/OscRect/OscViewport" unique_id=1147960452]
 width = 2.0
 gradient = SubResource("Gradient_lquwl")
 begin_cap_mode = 2
@@ -146,17 +178,24 @@ metadata/_edit_use_anchors_ = true
 visible = false
 layout_mode = 2
 
-[node name="Panel" type="NinePatchRect" parent="." unique_id=1446292899]
-self_modulate = Color(0.53, 0.53, 0.53, 1)
+[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=40750064]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.6333126
-anchor_top = 0.02
-anchor_right = 0.98000014
-anchor_bottom = 0.9800001
-offset_left = 0.35992432
+anchor_left = 0.640625
+anchor_top = 0.014583333
+anchor_right = 0.99140626
+anchor_bottom = 0.98541665
 grow_horizontal = 0
 grow_vertical = 2
+scroll_vertical = 301
+metadata/_edit_use_anchors_ = true
+
+[node name="Panel" type="NinePatchRect" parent="ScrollContainer" unique_id=1446292899]
+self_modulate = Color(0.53, 0.53, 0.53, 1)
+custom_minimum_size = Vector2(300, 1000)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 theme = ExtResource("4_1bvp3")
 texture = ExtResource("7_kek77")
 patch_margin_left = 10
@@ -165,7 +204,7 @@ patch_margin_right = 10
 patch_margin_bottom = 10
 metadata/_edit_use_anchors_ = true
 
-[node name="Controls" type="GridContainer" parent="Panel" unique_id=1391356130]
+[node name="Controls" type="GridContainer" parent="ScrollContainer/Panel" unique_id=1391356130]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -177,12 +216,12 @@ offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Amp" type="Control" parent="Panel/Controls" unique_id=63559967]
+[node name="Amp" type="Control" parent="ScrollContainer/Panel/Controls" unique_id=63559967]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Amp" type="HSlider" parent="Panel/Controls/Amp" unique_id=69454848]
+[node name="Amp" type="HSlider" parent="ScrollContainer/Panel/Controls/Amp" unique_id=69454848]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -200,7 +239,7 @@ step = 0.1
 value = 1.0
 exp_edit = true
 
-[node name="Label" type="Label" parent="Panel/Controls/Amp" unique_id=2118721654]
+[node name="Label" type="Label" parent="ScrollContainer/Panel/Controls/Amp" unique_id=2118721654]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -214,12 +253,12 @@ text = "Amplification
 label_settings = SubResource("LabelSettings_h2yge")
 text_overrun_behavior = 3
 
-[node name="TimeWindow" type="Control" parent="Panel/Controls" unique_id=36248910]
+[node name="TimeWindow" type="Control" parent="ScrollContainer/Panel/Controls" unique_id=36248910]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="OscSize" type="HSlider" parent="Panel/Controls/TimeWindow" unique_id=724741858]
+[node name="OscSize" type="HSlider" parent="ScrollContainer/Panel/Controls/TimeWindow" unique_id=724741858]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -236,7 +275,7 @@ max_value = 2000.0
 value = 200.0
 rounded = true
 
-[node name="Label" type="Label" parent="Panel/Controls/TimeWindow" unique_id=261647285]
+[node name="Label" type="Label" parent="ScrollContainer/Panel/Controls/TimeWindow" unique_id=261647285]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -250,12 +289,12 @@ text = "Oscilloscope time window
 label_settings = SubResource("LabelSettings_h2yge")
 text_overrun_behavior = 3
 
-[node name="Note" type="Control" parent="Panel/Controls" unique_id=1135752355]
+[node name="Note" type="Control" parent="ScrollContainer/Panel/Controls" unique_id=1135752355]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="NoteText" type="Label" parent="Panel/Controls/Note" unique_id=1890705424]
+[node name="NoteText" type="Label" parent="ScrollContainer/Panel/Controls/Note" unique_id=1890705424]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -267,7 +306,7 @@ text = "A# 4"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="NoteUp" type="Button" parent="Panel/Controls/Note/NoteText" unique_id=36464140]
+[node name="NoteUp" type="Button" parent="ScrollContainer/Panel/Controls/Note/NoteText" unique_id=36464140]
 material = ExtResource("3_h2yge")
 layout_mode = 1
 anchors_preset = 6
@@ -291,7 +330,7 @@ theme_override_colors/font_disabled_color = Color(0.34901962, 0.92156863, 0.7764
 theme_override_font_sizes/font_size = 81
 text = "+"
 
-[node name="NoteDown" type="Button" parent="Panel/Controls/Note/NoteText" unique_id=311177819]
+[node name="NoteDown" type="Button" parent="ScrollContainer/Panel/Controls/Note/NoteText" unique_id=311177819]
 material = ExtResource("3_h2yge")
 layout_mode = 1
 anchors_preset = 4
@@ -312,7 +351,7 @@ theme_override_colors/font_disabled_color = Color(0.34901962, 0.92156863, 0.7764
 theme_override_font_sizes/font_size = 81
 text = "-"
 
-[node name="Freq" type="Label" parent="Panel/Controls/Note/NoteText" unique_id=546154592]
+[node name="Freq" type="Label" parent="ScrollContainer/Panel/Controls/Note/NoteText" unique_id=546154592]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -329,14 +368,14 @@ label_settings = SubResource("LabelSettings_1bvp3")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CheckButton" type="CheckButton" parent="Panel/Controls" unique_id=1439599291]
+[node name="CheckButton" type="CheckButton" parent="ScrollContainer/Panel/Controls" unique_id=1439599291]
 layout_mode = 2
 theme_override_font_sizes/font_size = 31
 text = "Auto"
 flat = true
 text_overrun_behavior = 3
 
-[node name="FreqBase" type="SpinBox" parent="Panel/Controls" unique_id=394742797]
+[node name="FreqBase" type="SpinBox" parent="ScrollContainer/Panel/Controls" unique_id=394742797]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -349,13 +388,13 @@ prefix = "A 4 ="
 suffix = "Hz"
 custom_arrow_step = 1.0
 
-[node name="HighPass" type="Control" parent="Panel/Controls" unique_id=1959735093]
+[node name="HighPass" type="Control" parent="ScrollContainer/Panel/Controls" unique_id=1959735093]
 custom_minimum_size = Vector2(0.04, 0.035)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Cutoff" type="HSlider" parent="Panel/Controls/HighPass" unique_id=1486002028]
+[node name="Cutoff" type="HSlider" parent="ScrollContainer/Panel/Controls/HighPass" unique_id=1486002028]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -373,7 +412,7 @@ value = 1.0
 exp_edit = true
 rounded = true
 
-[node name="Label" type="Label" parent="Panel/Controls/HighPass" unique_id=1012622904]
+[node name="Label" type="Label" parent="ScrollContainer/Panel/Controls/HighPass" unique_id=1012622904]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -388,12 +427,12 @@ label_settings = SubResource("LabelSettings_h2yge")
 clip_text = true
 text_overrun_behavior = 3
 
-[node name="LowPass" type="Control" parent="Panel/Controls" unique_id=2076313216]
+[node name="LowPass" type="Control" parent="ScrollContainer/Panel/Controls" unique_id=2076313216]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Cutoff" type="HSlider" parent="Panel/Controls/LowPass" unique_id=1390775771]
+[node name="Cutoff" type="HSlider" parent="ScrollContainer/Panel/Controls/LowPass" unique_id=1390775771]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -411,7 +450,7 @@ value = 20050.0
 exp_edit = true
 rounded = true
 
-[node name="Label" type="Label" parent="Panel/Controls/LowPass" unique_id=1457048878]
+[node name="Label" type="Label" parent="ScrollContainer/Panel/Controls/LowPass" unique_id=1457048878]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -425,18 +464,61 @@ text = "Low pass filter cutoff
 label_settings = SubResource("LabelSettings_h2yge")
 text_overrun_behavior = 3
 
+[node name="Decay" type="Control" parent="ScrollContainer/Panel/Controls" unique_id=771985857]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Feedback" type="HSlider" parent="ScrollContainer/Panel/Controls/Decay" unique_id=1778674956]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = SubResource("Theme_h2yge")
+max_value = 0.95
+step = 0.01
+
+[node name="Label" type="Label" parent="ScrollContainer/Panel/Controls/Decay" unique_id=857736857]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "Feedback effect amount
+0.0"
+label_settings = SubResource("LabelSettings_h2yge")
+text_overrun_behavior = 3
+
+[node name="Compressor" type="CheckButton" parent="ScrollContainer/Panel/Controls" unique_id=1914390650]
+layout_mode = 2
+theme_override_font_sizes/font_size = 31
+text = "Compressor"
+flat = true
+text_overrun_behavior = 3
+
 [node name="NoteDetector" type="Node" parent="." unique_id=1023089]
 script = ExtResource("9_kek77")
 metadata/_custom_type_script = "uid://dsnggnmc5iwky"
 
 [connection signal="resized" from="." to="." method="draw_helper_lines"]
 [connection signal="folding_changed" from="InputDevices" to="." method="_on_input_devices_folding_changed"]
-[connection signal="value_changed" from="Panel/Controls/Amp/Amp" to="." method="_on_amp_value_changed"]
-[connection signal="value_changed" from="Panel/Controls/TimeWindow/OscSize" to="." method="_on_osc_time_value_changed"]
-[connection signal="pressed" from="Panel/Controls/Note/NoteText/NoteUp" to="." method="change_note" binds= [1]]
-[connection signal="pressed" from="Panel/Controls/Note/NoteText/NoteDown" to="." method="change_note" binds= [-1]]
-[connection signal="toggled" from="Panel/Controls/CheckButton" to="." method="_on_auto_button_toggled"]
-[connection signal="value_changed" from="Panel/Controls/FreqBase" to="." method="_on_freq_base_value_changed"]
-[connection signal="value_changed" from="Panel/Controls/HighPass/Cutoff" to="." method="_on_hp_cutoff_value_changed"]
-[connection signal="value_changed" from="Panel/Controls/LowPass/Cutoff" to="." method="_on_lp_cutoff_value_changed"]
+[connection signal="value_changed" from="ScrollContainer/Panel/Controls/Amp/Amp" to="." method="_on_amp_value_changed"]
+[connection signal="value_changed" from="ScrollContainer/Panel/Controls/TimeWindow/OscSize" to="." method="_on_osc_time_value_changed"]
+[connection signal="pressed" from="ScrollContainer/Panel/Controls/Note/NoteText/NoteUp" to="." method="change_note" binds= [1]]
+[connection signal="pressed" from="ScrollContainer/Panel/Controls/Note/NoteText/NoteDown" to="." method="change_note" binds= [-1]]
+[connection signal="toggled" from="ScrollContainer/Panel/Controls/CheckButton" to="." method="_on_auto_button_toggled"]
+[connection signal="value_changed" from="ScrollContainer/Panel/Controls/FreqBase" to="." method="_on_freq_base_value_changed"]
+[connection signal="value_changed" from="ScrollContainer/Panel/Controls/HighPass/Cutoff" to="." method="_on_hp_cutoff_value_changed"]
+[connection signal="value_changed" from="ScrollContainer/Panel/Controls/LowPass/Cutoff" to="." method="_on_lp_cutoff_value_changed"]
+[connection signal="value_changed" from="ScrollContainer/Panel/Controls/Decay/Feedback" to="." method="_on_feedback_value_changed"]
+[connection signal="toggled" from="ScrollContainer/Panel/Controls/Compressor" to="." method="_on_compressor_toggled"]
 [connection signal="detect_note_started" from="NoteDetector" to="." method="_on_note_detected"]

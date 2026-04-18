@@ -3,11 +3,14 @@ extends Control
 @onready var stream = $AudioStreamPlayer
 @onready var devices_container = $InputDevices
 @onready var osc_bg = $Oscilloscope_bg
-@onready var line : Line2D = osc_bg.get_node("OscVC/SubViewport/Line")
+@onready var osc_viewport = $Oscilloscope_bg/OscRect/OscViewport
+@onready var blur_texture: TextureRect  = $Oscilloscope_bg/OscVC/Feedback/Blur
+@onready var line : Line2D = osc_bg.get_node("OscRect/OscViewport/Line")
 var button_scene = preload("res://button.tscn")
 var capture : AudioEffectCapture
 var lowpass : AudioEffectLowPassFilter
 var highpass : AudioEffectHighPassFilter
+var compressor : AudioEffectCompressor
 var samples = PackedVector2Array()
 var update_samples = 256
 var max_samples = 8192
@@ -21,16 +24,20 @@ var min_note = -64 # G# -3
 var max_note = 9 # A4
 var osc_padding = 5
 var old_texture: Texture = Texture.new()
-
+var even = true
+var feedback_effect = true
 #C1 - B1
 var note_ranges = []
+
+var last_texture: Texture2D = ImageTexture.create_from_image(load("res://transparent.png"))
 
 
 func set_input_device(device_string):
 	AudioServer.input_device = device_string
 	sample_rate = AudioServer.get_input_mix_rate()
 	change_note(0)
-	_on_osc_time_value_changed($Panel/Controls/TimeWindow/OscSize.value)
+	_on_osc_time_value_changed($ScrollContainer/Panel/Controls/TimeWindow/OscSize.value)
+	$InputDevices.fold()
 	
 	
 
@@ -57,7 +64,7 @@ func st_to_pitch(st):
 func set_note(): # semitones over/under C4
 	var pitch = st_to_pitch(curr_note)
 	set_update_samples(pitch)
-	$Panel/Controls/Note/NoteText/Freq.text = "(" + str(snapped(pitch, 0.1)) + " Hz)"
+	$ScrollContainer/Panel/Controls/Note/NoteText/Freq.text = "(" + str(snapped(pitch, 0.1)) + " Hz)"
 	
 func draw_helper_lines():
 	if !is_node_ready():
@@ -90,13 +97,15 @@ func _ready() -> void:
 	set_input_device("Default")
 	highpass = AudioServer.get_bus_effect(1, 0)
 	lowpass = AudioServer.get_bus_effect(1, 1)
-	capture = AudioServer.get_bus_effect(1, 2)
+	compressor = AudioServer.get_bus_effect(1, 2)
+	capture = AudioServer.get_bus_effect(1, 3)
 	#fft = AudioServer.get_bus_effect_instance(1, 3)
-	_on_lp_cutoff_value_changed($Panel/Controls/LowPass/Cutoff.value)
-	_on_hp_cutoff_value_changed($Panel/Controls/HighPass/Cutoff.value)
+	_on_lp_cutoff_value_changed($ScrollContainer/Panel/Controls/LowPass/Cutoff.value)
+	_on_hp_cutoff_value_changed($ScrollContainer/Panel/Controls/HighPass/Cutoff.value)
 	change_note(-24) #C2
 	_on_auto_button_toggled(auto)
-	_on_freq_base_value_changed($Panel/Controls/FreqBase.value)
+	
+	_on_freq_base_value_changed($ScrollContainer/Panel/Controls/FreqBase.value)
 	
 
 func update_osc():
@@ -122,7 +131,14 @@ func _process(_delta: float) -> void:
 		samples.append_array(capture.get_buffer(update_samples))
 		if(samples.size() > max_samples):
 			samples = samples.slice(samples.size() - max_samples)
+		$Oscilloscope_bg/OscRect/OscViewport.size = $Oscilloscope_bg/OscVC/Feedback.size
 		update_osc()
+		
+		
+		if(feedback_effect): 
+			blur_texture.material.set_shader_parameter("prev_frame", last_texture)
+			last_texture = ImageTexture.create_from_image($Oscilloscope_bg/OscVC/Feedback.get_texture().get_image())
+		
 	
 
 
@@ -130,12 +146,12 @@ func change_note(amt: int) -> void:
 	curr_note += amt
 	set_note()
 	
-	if(curr_note <= min_note): $Panel/Controls/Note/NoteText/NoteDown.disabled = true
-	elif(!auto): $Panel/Controls/Note/NoteText/NoteDown.disabled = false
-	if(curr_note >= max_note): $Panel/Controls/Note/NoteText/NoteUp.disabled = true
-	elif(!auto): $Panel/Controls/Note/NoteText/NoteUp.disabled = false
+	if(curr_note <= min_note): $ScrollContainer/Panel/Controls/Note/NoteText/NoteDown.disabled = true
+	elif(!auto): $ScrollContainer/Panel/Controls/Note/NoteText/NoteDown.disabled = false
+	if(curr_note >= max_note): $ScrollContainer/Panel/Controls/Note/NoteText/NoteUp.disabled = true
+	elif(!auto): $ScrollContainer/Panel/Controls/Note/NoteText/NoteUp.disabled = false
 	
-	$Panel/Controls/Note/NoteText.text = note_names[curr_note % 12] + " " + str(4 + int(floor(curr_note / 12.0)))
+	$ScrollContainer/Panel/Controls/Note/NoteText.text = note_names[curr_note % 12] + " " + str(4 + int(floor(curr_note / 12.0)))
 
 func _on_input_devices_folding_changed(is_folded: bool) -> void:
 	if(!is_folded): get_devices()
@@ -143,13 +159,13 @@ func _on_input_devices_folding_changed(is_folded: bool) -> void:
 
 func _on_osc_time_value_changed(value: float) -> void:
 	max_samples = value / 1000 * sample_rate
-	$Panel/Controls/TimeWindow/Label.text = "Oscilloscope time window\n" + str(round(value)) + " ms"
+	$ScrollContainer/Panel/Controls/TimeWindow/Label.text = "Oscilloscope time window\n" + str(round(value)) + " ms"
 	draw_helper_lines()
 
 
 func _on_amp_value_changed(value: float) -> void:
 	input_amp = value
-	$Panel/Controls/Amp/Label.text = "Amplification\n" + str(snapped(value, 0.1))
+	$ScrollContainer/Panel/Controls/Amp/Label.text = "Amplification\n" + str(snapped(value, 0.1))
 
 
 func _on_freq_base_value_changed(value: float) -> void:
@@ -167,20 +183,34 @@ func _on_freq_base_value_changed(value: float) -> void:
 
 func _on_hp_cutoff_value_changed(value: float) -> void:
 	highpass.cutoff_hz = value
-	$Panel/Controls/HighPass/Label.text = "High pass filter cutoff\n" + str(int(value)) + " Hz"
+	$ScrollContainer/Panel/Controls/HighPass/Label.text = "High pass filter cutoff\n" + str(int(value)) + " Hz"
 
 
 func _on_lp_cutoff_value_changed(value: float) -> void:
 	lowpass.cutoff_hz = value
-	$Panel/Controls/LowPass/Label.text = "Low pass filter cutoff\n" + str(int(value)) + " Hz"
+	$ScrollContainer/Panel/Controls/LowPass/Label.text = "Low pass filter cutoff\n" + str(int(value)) + " Hz"
 
 
 func _on_auto_button_toggled(toggled_on: bool) -> void:
 	auto = toggled_on
-	$Panel/Controls/Note/NoteText/NoteUp.disabled = toggled_on
-	$Panel/Controls/Note/NoteText/NoteDown.disabled = toggled_on
+	$ScrollContainer/Panel/Controls/Note/NoteText/NoteUp.disabled = toggled_on
+	$ScrollContainer/Panel/Controls/Note/NoteText/NoteDown.disabled = toggled_on
 
 
 func _on_note_detected(event: NoteDetectEvent) -> void:
 	if auto:
 		change_note(event.note_index - 12 * event.note_octave - 36 - curr_note)
+
+
+func _on_feedback_value_changed(value: float) -> void:
+	blur_texture.material.set_shader_parameter("feedback", value)
+	feedback_effect = value > 0.01
+	if(!feedback_effect):
+		blur_texture.material.set_shader_parameter("prev_frame", ImageTexture.create_from_image(load("res://transparent.png")))
+	$ScrollContainer/Panel/Controls/Decay/Label.text = "Feedback effect amount\n" + str(value)
+		
+	
+
+
+func _on_compressor_toggled(toggled_on: bool) -> void:
+	compressor.mix = 1.0 if toggled_on else 0.0
