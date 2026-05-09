@@ -127,6 +127,7 @@ stretch = true
 
 [node name="Feedback" type="SubViewport" parent="Oscilloscope_bg/OscVC" unique_id=1224685877]
 transparent_bg = true
+handle_input_locally = false
 size = Vector2i(666, 514)
 render_target_update_mode = 4
 
@@ -187,7 +188,7 @@ anchor_right = 0.99140626
 anchor_bottom = 0.98541665
 grow_horizontal = 0
 grow_vertical = 2
-scroll_vertical = 301
+scroll_vertical = 100
 metadata/_edit_use_anchors_ = true
 
 [node name="Panel" type="NinePatchRect" parent="ScrollContainer" unique_id=1446292899]
@@ -510,6 +511,7 @@ script = ExtResource("9_kek77")
 metadata/_custom_type_script = "uid://dsnggnmc5iwky"
 
 [connection signal="resized" from="." to="." method="draw_helper_lines"]
+[connection signal="tree_exiting" from="." to="." method="_on_tree_exiting"]
 [connection signal="folding_changed" from="InputDevices" to="." method="_on_input_devices_folding_changed"]
 [connection signal="value_changed" from="ScrollContainer/Panel/Controls/Amp/Amp" to="." method="_on_amp_value_changed"]
 [connection signal="value_changed" from="ScrollContainer/Panel/Controls/TimeWindow/OscSize" to="." method="_on_osc_time_value_changed"]

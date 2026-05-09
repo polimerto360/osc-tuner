@@ -30,7 +30,36 @@ var feedback_effect = true
 var note_ranges = []
 
 var last_texture: Texture2D = ImageTexture.create_from_image(load("res://transparent.png"))
+var save_path = "user://settings.json"
 
+func load_save():
+	if(!FileAccess.file_exists(save_path)): return
+	var savefile = JSON.parse_string(FileAccess.open(save_path, FileAccess.READ).get_as_text())
+	set_input_device(savefile["input_device"])
+	$ScrollContainer/Panel/Controls/Amp/Amp.value = savefile["amplification"]
+	$ScrollContainer/Panel/Controls/TimeWindow/OscSize.value = savefile["oscsize"]
+	$ScrollContainer/Panel/Controls/CheckButton.button_pressed = savefile["auto"]
+	$ScrollContainer/Panel/Controls/FreqBase.value = savefile["freqbase"]
+	$ScrollContainer/Panel/Controls/HighPass/Cutoff.value = savefile["highpass"]
+	$ScrollContainer/Panel/Controls/LowPass/Cutoff.value = savefile["lowpass"]
+	$ScrollContainer/Panel/Controls/Decay/Feedback.value = savefile["feedback"]
+	$ScrollContainer/Panel/Controls/Compressor.button_pressed = savefile["compressor"]
+	
+func save():
+	var savejson = {
+		"input_device": AudioServer.input_device,
+		"amplification": $ScrollContainer/Panel/Controls/Amp/Amp.value,
+		"oscsize": $ScrollContainer/Panel/Controls/TimeWindow/OscSize.value,
+		"auto": $ScrollContainer/Panel/Controls/CheckButton.button_pressed,
+		"freqbase": $ScrollContainer/Panel/Controls/FreqBase.value,
+		"highpass": $ScrollContainer/Panel/Controls/HighPass/Cutoff.value,
+		"lowpass": $ScrollContainer/Panel/Controls/LowPass/Cutoff.value,
+		"feedback": $ScrollContainer/Panel/Controls/Decay/Feedback.value,
+		"compressor": $ScrollContainer/Panel/Controls/Compressor.button_pressed
+	}
+	var savefile = FileAccess.open(save_path, FileAccess.WRITE)
+	savefile.store_string(JSON.stringify(savejson))
+	savefile.close()
 
 func set_input_device(device_string):
 	AudioServer.input_device = device_string
@@ -100,6 +129,7 @@ func _ready() -> void:
 	compressor = AudioServer.get_bus_effect(1, 2)
 	capture = AudioServer.get_bus_effect(1, 3)
 	#fft = AudioServer.get_bus_effect_instance(1, 3)
+	load_save()
 	_on_lp_cutoff_value_changed($ScrollContainer/Panel/Controls/LowPass/Cutoff.value)
 	_on_hp_cutoff_value_changed($ScrollContainer/Panel/Controls/HighPass/Cutoff.value)
 	change_note(-24) #C2
@@ -125,7 +155,7 @@ func update_osc():
 		curr_x += step_x
 
 
-func _process(_delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if(capture.can_get_buffer(update_samples)):
 		line.queue_redraw()
 		samples.append_array(capture.get_buffer(update_samples))
@@ -135,9 +165,10 @@ func _process(_delta: float) -> void:
 		update_osc()
 		
 		
-		if(feedback_effect): 
-			blur_texture.material.set_shader_parameter("prev_frame", last_texture)
-			last_texture = ImageTexture.create_from_image($Oscilloscope_bg/OscVC/Feedback.get_texture().get_image())
+func _process(_delta: float) -> void:
+	if(feedback_effect): 
+		blur_texture.material.set_shader_parameter("prev_frame", last_texture)
+		last_texture = ImageTexture.create_from_image($Oscilloscope_bg/OscVC/Feedback.get_texture().get_image())
 		
 	
 
@@ -214,3 +245,7 @@ func _on_feedback_value_changed(value: float) -> void:
 
 func _on_compressor_toggled(toggled_on: bool) -> void:
 	compressor.mix = 1.0 if toggled_on else 0.0
+
+
+func _on_tree_exiting() -> void:
+	save()

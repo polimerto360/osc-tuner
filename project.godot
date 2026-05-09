@@ -38,6 +38,10 @@ window/size/viewport_height=720
 
 enabled=PackedStringArray("res://addons/note_detector/plugin.cfg", "res://addons/ridiculous_coding/plugin.cfg")
 
+[physics]
+
+common/physics_ticks_per_second=300
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
